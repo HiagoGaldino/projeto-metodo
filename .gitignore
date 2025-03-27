@@ -1,0 +1,19 @@
+# Ignorar arquivos temporários do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar pastas de build e dependências
+/node_modules
+/dist
+/build
+
+# Ignorar arquivos sensíveis
+.env
+*.key
+*.pem
+
+# Ignorar PDFs e outros documentos
+# *.pdf
+
+# Ignorar pastas específicas
+# Documentos e diagramas/
