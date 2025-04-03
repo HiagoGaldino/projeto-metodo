@@ -9,7 +9,7 @@ public class Principal {
         SistemaGerenteFacade sistema = SistemaGerenteFacade.getInstance();
         int opcao = 0;
 
-        while (opcao != 7) {
+        while (opcao != 9) {
             System.out.println("\n===== MENU =====");
             System.out.println("1 - Adicionar Usuário");
             System.out.println("2 - Bloquear Usuário");
@@ -17,7 +17,9 @@ public class Principal {
             System.out.println("4 - Adicionar Pagamento");
             System.out.println("5 - Listar Pagamentos");
             System.out.println("6 - Aprovar Pagamento");
-            System.out.println("7 - Sair");
+            System.out.println("7 - Atualizar Pagamento");
+            System.out.println("8 - Desfazer Atualização de Pagamento");
+            System.out.println("9 - Sair");
             System.out.print("Escolha uma opção: ");
 
             try {
@@ -34,25 +36,19 @@ public class Principal {
                     System.out.print("Senha: ");
                     String senha = sc.nextLine();
                     sistema.adicionarUsuario(login, senha);
-                    System.out.println("Usuário adicionado com sucesso!");
                     break;
 
                 case 2:
                     System.out.print("ID do Usuário para bloquear: ");
                     try {
                         int idBloquear = Integer.parseInt(sc.nextLine());
-                        if (sistema.bloquearUsuario(idBloquear)) {
-                            System.out.println("Usuário bloqueado com sucesso!");
-                        } else {
-                            System.out.println("Usuário não encontrado!");
-                        }
+                        sistema.bloquearUsuario(idBloquear);
                     } catch (NumberFormatException e) {
                         System.out.println("ID inválido!");
                     }
                     break;
 
                 case 3:
-                    System.out.println("=== Lista de Usuários ===");
                     sistema.listarUsuarios();
                     break;
 
@@ -63,14 +59,12 @@ public class Principal {
                         System.out.print("Método de pagamento: ");
                         String metodo = sc.nextLine();
                         sistema.adicionarPagamento(valor, metodo);
-                        System.out.println("Pagamento registrado com sucesso!");
                     } catch (NumberFormatException e) {
                         System.out.println("Valor inválido!");
                     }
                     break;
 
                 case 5:
-                    System.out.println("=== Lista de Pagamentos ===");
                     sistema.listarPagamentos();
                     break;
 
@@ -78,17 +72,31 @@ public class Principal {
                     System.out.print("ID do Pagamento para aprovar: ");
                     try {
                         int idPagamento = Integer.parseInt(sc.nextLine());
-                        if (sistema.aprovarPagamento(idPagamento)) {
-                            System.out.println("Pagamento aprovado com sucesso!");
-                        } else {
-                            System.out.println("Pagamento não encontrado!");
-                        }
+                        sistema.aprovarPagamento(idPagamento);
                     } catch (NumberFormatException e) {
                         System.out.println("ID inválido!");
                     }
                     break;
-
+                    
                 case 7:
+                    System.out.print("ID do Pagamento para atualizar: ");
+                    try {
+                        int idPagamento = Integer.parseInt(sc.nextLine());
+                        System.out.print("Novo valor do pagamento: ");
+                        double novoValor = Double.parseDouble(sc.nextLine());
+                        System.out.print("Novo método de pagamento: ");
+                        String novoMetodo = sc.nextLine();
+                        sistema.atualizarPagamento(idPagamento, novoValor, novoMetodo);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Entrada inválida!");
+                    }
+                    break;
+                    
+                case 8:
+                    sistema.undoAtualizacaoPagamento();
+                    break;
+                    
+                case 9:
                     System.out.println("Saindo do sistema...");
                     break;
 

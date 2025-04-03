@@ -22,6 +22,23 @@ public class Pagamento implements Serializable {
     public boolean isAprovado() { return aprovado; }
 
     public void aprovar() { this.aprovado = true; }
+    
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+    
+    public void setMetodo(String metodo) {
+        this.metodo = metodo;
+    }
+    
+    public PaymentMemento createMemento() {
+        return new PaymentMemento(this.valor, this.metodo);
+    }
+    
+    public void restoreMemento(PaymentMemento memento) {
+        this.valor = memento.getValor();
+        this.metodo = memento.getMetodo();
+    }
 
     @Override
     public String toString() {

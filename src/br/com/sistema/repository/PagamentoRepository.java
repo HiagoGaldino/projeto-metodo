@@ -36,6 +36,19 @@ public class PagamentoRepository {
     public List<Pagamento> listarPagamentos() {
         return pagamentos;
     }
+    
+    public Pagamento getPagamentoById(int id) {
+        for (Pagamento p : pagamentos) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+    
+    public void savePagamentos() {
+        salvarPagamentos();
+    }
 
     private void carregarPagamentos() {
         File file = new File(ARQUIVO);
