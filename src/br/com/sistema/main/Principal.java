@@ -1,7 +1,10 @@
+// File: src/br/com/sistema/main/Principal.java
 package br.com.sistema.main;
 
 import br.com.sistema.repository.SistemaGerenteFacade;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.List;
 
 public class Principal {
     public static void main(String[] args) {
@@ -19,6 +22,7 @@ public class Principal {
             System.out.println("6 - Aprovar Pagamento");
             System.out.println("7 - Atualizar Pagamento");
             System.out.println("8 - Desfazer Atualização de Pagamento");
+            System.out.println("10 - Calcular Total Composite de Pagamentos");
             System.out.println("9 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -35,21 +39,21 @@ public class Principal {
                     String login = sc.nextLine();
                     System.out.print("Senha: ");
                     String senha = sc.nextLine();
-                    sistema.adicionarUsuario(login, senha);
+                    sistema.executeCommand("adicionarUsuario", new Object[]{login, senha});
                     break;
 
                 case 2:
                     System.out.print("ID do Usuário para bloquear: ");
                     try {
                         int idBloquear = Integer.parseInt(sc.nextLine());
-                        sistema.bloquearUsuario(idBloquear);
+                        sistema.executeCommand("bloquearUsuario", new Object[]{idBloquear});
                     } catch (NumberFormatException e) {
                         System.out.println("ID inválido!");
                     }
                     break;
 
                 case 3:
-                    sistema.listarUsuarios();
+                    sistema.executeCommand("listarUsuarios", null);
                     break;
 
                 case 4:
@@ -58,21 +62,21 @@ public class Principal {
                         double valor = Double.parseDouble(sc.nextLine());
                         System.out.print("Método de pagamento: ");
                         String metodo = sc.nextLine();
-                        sistema.adicionarPagamento(valor, metodo);
+                        sistema.executeCommand("adicionarPagamento", new Object[]{valor, metodo});
                     } catch (NumberFormatException e) {
                         System.out.println("Valor inválido!");
                     }
                     break;
 
                 case 5:
-                    sistema.listarPagamentos();
+                    sistema.executeCommand("listarPagamentos", null);
                     break;
 
                 case 6:
                     System.out.print("ID do Pagamento para aprovar: ");
                     try {
                         int idPagamento = Integer.parseInt(sc.nextLine());
-                        sistema.aprovarPagamento(idPagamento);
+                        sistema.executeCommand("aprovarPagamento", new Object[]{idPagamento});
                     } catch (NumberFormatException e) {
                         System.out.println("ID inválido!");
                     }
@@ -86,14 +90,24 @@ public class Principal {
                         double novoValor = Double.parseDouble(sc.nextLine());
                         System.out.print("Novo método de pagamento: ");
                         String novoMetodo = sc.nextLine();
-                        sistema.atualizarPagamento(idPagamento, novoValor, novoMetodo);
+                        sistema.executeCommand("atualizarPagamento", new Object[]{idPagamento, novoValor, novoMetodo});
                     } catch (NumberFormatException e) {
                         System.out.println("Entrada inválida!");
                     }
                     break;
                     
                 case 8:
-                    sistema.undoAtualizacaoPagamento();
+                    sistema.executeCommand("undoAtualizacaoPagamento", null);
+                    break;
+                    
+                case 10:
+                    System.out.print("Informe os IDs dos pagamentos separados por vírgula: ");
+                    String input = sc.nextLine();
+                    List<Integer> ids = Arrays.stream(input.split(","))
+                            .map(String::trim)
+                            .map(Integer::parseInt)
+                            .toList();
+                    sistema.executeCommand("calcularTotalPagamento", ids);
                     break;
                     
                 case 9:

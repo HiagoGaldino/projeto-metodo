@@ -1,17 +1,18 @@
+// File: src/br/com/sistema/command/ListarPagamentosCommand.java
 package br.com.sistema.command;
 
-import br.com.sistema.repository.PagamentoRepository;
+import br.com.sistema.repository.SistemaMediator;
 
 public class ListarPagamentosCommand implements Command {
-    private PagamentoRepository pagamentoRepo;
+    private SistemaMediator mediator;
     
-    public ListarPagamentosCommand(PagamentoRepository pagamentoRepo) {
-        this.pagamentoRepo = pagamentoRepo;
+    public ListarPagamentosCommand(SistemaMediator mediator) {
+        this.mediator = mediator;
     }
     
     @Override
     public Object execute(Object arg) {
-        pagamentoRepo.listarPagamentos().forEach(System.out::println);
+        mediator.listarPagamentos().forEach(System.out::println);
         return null;
     }
     

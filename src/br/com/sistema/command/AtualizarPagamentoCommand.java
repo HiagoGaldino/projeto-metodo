@@ -1,17 +1,18 @@
+// File: src/br/com/sistema/command/AtualizarPagamentoCommand.java
 package br.com.sistema.command;
 
 import br.com.sistema.model.Pagamento;
 import br.com.sistema.model.PaymentMemento;
-import br.com.sistema.repository.PagamentoRepository;
+import br.com.sistema.repository.SistemaMediator;
 
 public class AtualizarPagamentoCommand implements Command {
-    private PagamentoRepository pagamentoRepo;
+    private SistemaMediator mediator;
     private PaymentMemento lastMemento;
     private int lastPagamentoId;
     private boolean executed = false;
     
-    public AtualizarPagamentoCommand(PagamentoRepository pagamentoRepo) {
-        this.pagamentoRepo = pagamentoRepo;
+    public AtualizarPagamentoCommand(SistemaMediator mediator) {
+        this.mediator = mediator;
     }
     
     @Override
@@ -21,20 +22,18 @@ public class AtualizarPagamentoCommand implements Command {
         double novoValor = (Double) params[1];
         String novoMetodo = (String) params[2];
         
-        Pagamento pagamento = pagamentoRepo.getPagamentoById(id);
+        Pagamento pagamento = mediator.getPagamentoById(id);
         if (pagamento == null) {
             System.out.println("Pagamento não encontrado!");
             return null;
         }
-        // Salva o estado atual via Memento
         lastMemento = pagamento.createMemento();
         lastPagamentoId = id;
         executed = true;
         
-        // Aplica a atualização
         pagamento.setValor(novoValor);
         pagamento.setMetodo(novoMetodo);
-        pagamentoRepo.savePagamentos();
+        mediator.salvarPagamentos();
         System.out.println("Pagamento atualizado com sucesso!");
         return pagamento;
     }
@@ -45,10 +44,10 @@ public class AtualizarPagamentoCommand implements Command {
             System.out.println("Nenhuma atualização para desfazer!");
             return;
         }
-        Pagamento pagamento = pagamentoRepo.getPagamentoById(lastPagamentoId);
+        Pagamento pagamento = mediator.getPagamentoById(lastPagamentoId);
         if (pagamento != null) {
             pagamento.restoreMemento(lastMemento);
-            pagamentoRepo.savePagamentos();
+            mediator.salvarPagamentos();
             System.out.println("Atualização desfeita com sucesso!");
             executed = false;
             lastMemento = null;

@@ -2,7 +2,7 @@
  * 
  */
 /**
- * @author Emmanuel, Hiago, Sergio, Matheus, Alisson
+ * @author Emmanuel
  *
  */
 module SistemaUsuarios {

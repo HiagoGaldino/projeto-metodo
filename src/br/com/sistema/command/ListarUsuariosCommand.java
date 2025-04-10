@@ -1,17 +1,18 @@
+// File: src/br/com/sistema/command/ListarUsuariosCommand.java
 package br.com.sistema.command;
 
-import br.com.sistema.repository.UsuarioRepository;
+import br.com.sistema.repository.SistemaMediator;
 
 public class ListarUsuariosCommand implements Command {
-    private UsuarioRepository usuarioRepo;
+    private SistemaMediator mediator;
     
-    public ListarUsuariosCommand(UsuarioRepository usuarioRepo) {
-        this.usuarioRepo = usuarioRepo;
+    public ListarUsuariosCommand(SistemaMediator mediator) {
+        this.mediator = mediator;
     }
     
     @Override
     public Object execute(Object arg) {
-        usuarioRepo.listarTodos().forEach(System.out::println);
+        mediator.listarUsuarios().forEach(System.out::println);
         return null;
     }
     
