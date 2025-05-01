@@ -1,5 +1,7 @@
 // File: src/br/com/sistema/model/Pagamento.java
 package br.com.sistema.model;
+import br.com.sistema.state.PaymentState;
+import br.com.sistema.strategy.PaymentStrategy;
 
 import java.io.Serializable;
 import br.com.sistema.composite.PagamentoComponente;
@@ -7,6 +9,26 @@ import br.com.sistema.flyweight.PaymentMethod;
 import br.com.sistema.flyweight.PaymentMethodFactory;
 
 public class Pagamento implements Serializable, PagamentoComponente {
+
+    // State and Strategy pattern fields
+    private br.com.sistema.state.PaymentState state;
+    private br.com.sistema.strategy.PaymentStrategy strategy;
+
+    public void setState(br.com.sistema.state.PaymentState state) {
+        this.state = state;
+    }
+
+    public void processState() {
+        if (state != null) state.handle(this);
+    }
+
+    public void setStrategy(br.com.sistema.strategy.PaymentStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public double calculateFee() {
+        return strategy != null ? strategy.calculateFee(this) : 0;
+    }
     private static final long serialVersionUID = 1L;
     private int id;
     private double valor;

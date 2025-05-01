@@ -1,0 +1,72 @@
+@startuml
+skinparam package {
+  BackgroundColor<<Iterator>> #ADD8E6
+  BackgroundColor<<Prototype>> #90EE90
+  BackgroundColor<<Decorator>> #FFA500
+  BackgroundColor<<Observer>> #FFFF99
+  BackgroundColor<<Proxy>> #FFC0CB
+  BackgroundColor<<Builder>> #DDA0DD
+  BackgroundColor<<Interpreter>> #D3D3D3
+  BackgroundColor<<Visitor>> #A52A2A
+  BackgroundColor<<State>> #FF6347
+  BackgroundColor<<Strategy>> #00CED1
+}
+
+package "Iterator" <<Iterator>> {
+  class OrderIterator
+  class PedidoCollection
+}
+
+package "Prototype" <<Prototype>> {
+  class Pedido : Cloneable
+}
+
+package "Decorator" <<Decorator>> {
+  abstract class NotificationDecorator
+  class EmailNotifier
+  class SMSNotifier
+}
+
+package "Observer" <<Observer>> {
+  interface DeliveryObserver
+  class DeliverySubject
+  class ConsoleObserver
+  class EmailObserver
+}
+
+package "Proxy" <<Proxy>> {
+  interface MapService
+  class MapServiceProxy
+}
+
+package "Builder" <<Builder>> {
+  class PedidoBuilder
+  class Director
+}
+
+package "Interpreter" <<Interpreter>> {
+  interface Expression
+  class AndExpression
+  class OrExpression
+  class TerminalExpression
+  class InterpreterContext
+}
+
+package "Visitor" <<Visitor>> {
+  interface Visitor
+  class ReportVisitor
+  class ValidationVisitor
+}
+
+package "State" <<State>> {
+  interface PaymentState
+  class PendingState
+  class CompletedState
+}
+
+package "Strategy" <<Strategy>> {
+  interface PaymentStrategy
+  class CreditCardStrategy
+  class PaypalStrategy
+}
+@enduml
