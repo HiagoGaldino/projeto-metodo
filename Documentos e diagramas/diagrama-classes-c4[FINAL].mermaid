@@ -1,0 +1,290 @@
+classDiagram
+    %% Sistema Principal - Facade e Mediator
+    class SistemaGerenteFacade {
+        -static SistemaGerenteFacade instancia
+        -UsuarioRepository usuarioRepo
+        -PagamentoRepository pagamentoRepo
+        -CommandHandler chain
+        -void initChain()
+        +static SistemaGerenteFacade getInstance()
+        +void executeCommand(String, Object)
+        +void adicionarUsuario(String, String)
+        +boolean bloquearUsuario(int)
+        +List~Usuario~ listarUsuarios()
+        +void adicionarPagamento(double, String)
+        +boolean aprovarPagamento(int)
+        +List~Pagamento~ listarPagamentos()
+        +Pagamento getPagamentoById(int)
+        +void salvarPagamentos()
+    }
+
+    class SistemaMediator {
+        <<interface>>
+        +void adicionarUsuario(String, String)
+        +boolean bloquearUsuario(int)
+        +List~Usuario~ listarUsuarios()
+        +void adicionarPagamento(double, String)
+        +boolean aprovarPagamento(int)
+        +List~Pagamento~ listarPagamentos()
+        +Pagamento getPagamentoById(int)
+        +void salvarPagamentos()
+    }
+
+    %% Repositórios
+    class UsuarioRepository {
+        -List~Usuario~ usuarios
+        -int geradorId
+        -final String ARQUIVO
+        +void adicionarUsuario(String, String)
+        +boolean bloquearUsuario(int)
+        +List~Usuario~ listarTodos()
+        -void carregarUsuarios()
+        -void salvarUsuarios()
+    }
+
+    class PagamentoRepository {
+        -List~Pagamento~ pagamentos
+        -int geradorId
+        -final String ARQUIVO
+        +void adicionarPagamento(double, String)
+        +boolean aprovarPagamento(int)
+        +List~Pagamento~ listarPagamentos()
+        +Pagamento getPagamentoById(int)
+        +void savePagamentos()
+        -void carregarPagamentos()
+        -void salvarPagamentos()
+    }
+
+    %% Modelos
+    class Usuario {
+        -int id
+        -String login
+        -String senha
+        -boolean bloqueado
+        +int getId()
+        +String getLogin()
+        +String getSenha()
+        +boolean isBloqueado()
+        +void setBloqueado(boolean)
+        +String toString()
+    }
+
+    class Pagamento {
+        -PaymentState state
+        -PaymentStrategy strategy
+        -int id
+        -double valor
+        -PaymentMethod metodo
+        -boolean aprovado
+        +void setState(PaymentState)
+        +void processState()
+        +void setStrategy(PaymentStrategy)
+        +double calculateFee()
+        +int getId()
+        +double getValor()
+        +PaymentMethod getMetodo()
+        +boolean isAprovado()
+        +void aprovar()
+        +void setValor(double)
+        +void setMetodo(String)
+        +PaymentMemento createMemento()
+        +void restoreMemento(PaymentMemento)
+        +String toString()
+        +double getValorTotal()
+    }
+
+    class PaymentMemento {
+        -double valor
+        -String metodo
+        +double getValor()
+        +String getMetodo()
+    }
+
+    %% Command Pattern
+    class Command {
+        <<interface>>
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class AdicionarUsuarioCommand {
+        -SistemaMediator mediator
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class BloquearUsuarioCommand {
+        -SistemaMediator mediator
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class ListarUsuariosCommand {
+        -SistemaMediator mediator
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class AdicionarPagamentoCommand {
+        -SistemaMediator mediator
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class AprovarPagamentoCommand {
+        -SistemaMediator mediator
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class ListarPagamentosCommand {
+        -SistemaMediator mediator
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class AtualizarPagamentoCommand {
+        -SistemaMediator mediator
+        -PaymentMemento lastMemento
+        -int lastPagamentoId
+        -boolean executed
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class UndoAtualizacaoPagamentoCommand {
+        -AtualizarPagamentoCommand atualizarCommand
+        +Object execute(Object)
+        +void undo()
+    }
+
+    class CalcularTotalPagamentoCompositeCommand {
+        -SistemaMediator mediator
+        +Object execute(Object)
+        +void undo()
+    }
+
+    %% Chain of Responsibility
+    class CommandHandler {
+        <<abstract>>
+        #CommandHandler next
+        +void setNext(CommandHandler)
+        +abstract boolean handle(String, Object)
+    }
+
+    class ConcreteCommandHandler {
+        -Map~String, Command~ commandMap
+        +boolean handle(String, Object)
+    }
+
+    %% Composite Pattern
+    class PagamentoComponente {
+        <<interface>>
+        +double getValorTotal()
+    }
+
+    class CompositePagamento {
+        -List~PagamentoComponente~ componentes
+        +void add(PagamentoComponente)
+        +void remove(PagamentoComponente)
+        +double getValorTotal()
+    }
+
+    %% Flyweight Pattern
+    class PaymentMethodFactory {
+        -static Map~String, PaymentMethod~ pool
+        +static PaymentMethod getPaymentMethod(String)
+    }
+
+    class PaymentMethod {
+        -String method
+        +String getMethod()
+        +String toString()
+        +static PaymentMethod of(String)
+    }
+
+    %% State Pattern
+    class PaymentState {
+        <<interface>>
+        +void handle(Pagamento)
+    }
+
+    class PendingState {
+        +void handle(Pagamento)
+    }
+
+    class CompletedState {
+        +void handle(Pagamento)
+    }
+
+    %% Strategy Pattern
+    class PaymentStrategy {
+        <<interface>>
+        +double calculateFee(Pagamento)
+    }
+
+    class PaypalStrategy {
+        +double calculateFee(Pagamento)
+    }
+
+    class CreditCardStrategy {
+        +double calculateFee(Pagamento)
+    }
+
+    %% Principal
+    class Principal {
+        +static void main(String[])
+    }
+
+    %% Relacionamentos
+    SistemaGerenteFacade ..|> SistemaMediator
+    
+    SistemaGerenteFacade --> UsuarioRepository
+    SistemaGerenteFacade --> PagamentoRepository
+    SistemaGerenteFacade --> CommandHandler
+    
+    CommandHandler <|-- ConcreteCommandHandler
+    ConcreteCommandHandler --> Command
+
+    Command <|.. AdicionarUsuarioCommand
+    Command <|.. BloquearUsuarioCommand
+    Command <|.. ListarUsuariosCommand
+    Command <|.. AdicionarPagamentoCommand
+    Command <|.. AprovarPagamentoCommand
+    Command <|.. ListarPagamentosCommand
+    Command <|.. AtualizarPagamentoCommand
+    Command <|.. UndoAtualizacaoPagamentoCommand
+    Command <|.. CalcularTotalPagamentoCompositeCommand
+
+    AdicionarUsuarioCommand --> SistemaMediator
+    BloquearUsuarioCommand --> SistemaMediator
+    ListarUsuariosCommand --> SistemaMediator
+    AdicionarPagamentoCommand --> SistemaMediator
+    AprovarPagamentoCommand --> SistemaMediator
+    ListarPagamentosCommand --> SistemaMediator
+    AtualizarPagamentoCommand --> SistemaMediator
+    UndoAtualizacaoPagamentoCommand --> AtualizarPagamentoCommand
+    CalcularTotalPagamentoCompositeCommand --> SistemaMediator
+    CalcularTotalPagamentoCompositeCommand --> CompositePagamento
+
+    PagamentoComponente <|.. Pagamento
+    PagamentoComponente <|.. CompositePagamento
+    
+    Principal --> SistemaGerenteFacade
+    
+    UsuarioRepository --> Usuario
+    PagamentoRepository --> Pagamento
+    
+    Pagamento --> PaymentState
+    Pagamento --> PaymentStrategy
+    Pagamento --> PaymentMethod
+    Pagamento --> PaymentMemento
+    
+    PaymentState <|.. PendingState
+    PaymentState <|.. CompletedState
+    
+    PaymentStrategy <|.. PaypalStrategy
+    PaymentStrategy <|.. CreditCardStrategy
+    
+    PaymentMethod --> PaymentMethodFactory
+    PaymentMethodFactory --> PaymentMethod
